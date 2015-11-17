@@ -78,15 +78,15 @@ void MyGLWidget::paintGL ()
 
 void MyGLWidget::resizeGL (int w, int h)
 {
-  glViewport (0, 0, w, h);
   ra = double(w) / double(h);
-  if (ra < 1){
+  if (ra >= 1) projectTransform();
+  else {
       auxAngle = fovAngle;
       fovAngle = 2 * atan(tan(auxAngle / 2) / ra);
       projectTransform();
       fovAngle = auxAngle;
   }
-  else projectTransform();
+  glViewport (0, 0, w, h);
 }
 
 void MyGLWidget::createBuffers ()
@@ -508,7 +508,6 @@ void MyGLWidget::keyPressEvent (QKeyEvent *e)
 
     case Qt::Key_Escape:
         exit(0);
-
     default: e->ignore(); break;
   }
   updateGL();
