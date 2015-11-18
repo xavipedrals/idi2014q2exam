@@ -84,4 +84,8 @@ class MyGLWidget : public QGLWidget
     glm::vec3 up;
     bool isCameraModified;
     bool isFocusRed;
+
+    //parametres camera axonometrica (ortho)
+    bool isOrthoPlantCamera;
+    GLdouble left, right, bottom, top;
 };

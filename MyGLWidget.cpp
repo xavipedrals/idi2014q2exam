@@ -23,6 +23,11 @@ MyGLWidget::MyGLWidget (QGLFormat &f, QWidget* parent) : QGLWidget(f, parent)
   zNear = double(radiAux);
   zFar = 3. * double(radiAux);
   isFocusRed = false;
+  isOrthoPlantCamera = false;
+  left = -11.;
+  right = 11.;
+  bottom = -11.;
+  top = 11.;
 }
 
 void MyGLWidget::initializeGL ()
@@ -395,7 +400,8 @@ void MyGLWidget::projectTransform ()
 {
   glm::mat4 Proj;  // Matriu de projecció
 //  Proj = glm::perspective(M_PI/3.0, 1.0, double(radiAux), 3.*double(radiAux));
-  Proj = glm::perspective(fovAngle, ra, zNear, zFar);
+  if (isOrthoPlantCamera) Proj = glm::ortho(left, right, bottom, top, zNear, zFar);
+  else Proj = glm::perspective(fovAngle, ra, zNear, zFar);
   //FOV = 60, ra (rati aspecte), zNear, zFar
   glUniformMatrix4fv (projLoc, 1, GL_FALSE, &Proj[0][0]);
 }
@@ -404,11 +410,13 @@ void MyGLWidget::viewTransform ()
 {
   glm::mat4 View;  // Matriu de posició i orientació
 //  View = glm::translate(glm::mat4(1.f), posObs); //OBS = -2*R
+  if (isOrthoPlantCamera) View = glm::lookAt(glm::vec3(0,2*radiAux,0), vrp, glm::vec3(0,0,1));    //VISTA EN PLANTA
+  else {
   View = glm::lookAt(posObs, vrp, up);
-//  View = glm::lookAt(glm::vec3(0,2*radiAux,0), vrp, glm::vec3(0,0,1));    //VISTA EN PLANTA
   //lookAt(OBS, VRP, UP)
   View = glm::rotate(View, angleX, glm::vec3(1, 0, 0));
   View = glm::rotate(View, -angleY, glm::vec3(0, 1, 0));
+  }
   glUniformMatrix4fv (viewLoc, 1, GL_FALSE, &View[0][0]);
 }
 
@@ -505,6 +513,15 @@ void MyGLWidget::keyPressEvent (QKeyEvent *e)
         isFocusRed = !isFocusRed;
         break;
       }
+
+    //camera axonomètrica vista en planta
+    case Qt::Key_A:
+    {
+        isOrthoPlantCamera = !isOrthoPlantCamera;
+        projectTransform();
+        viewTransform();
+        break;
+    }
 
     case Qt::Key_Escape:
         exit(0);
