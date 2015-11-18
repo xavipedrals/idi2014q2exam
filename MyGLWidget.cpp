@@ -28,6 +28,7 @@ MyGLWidget::MyGLWidget (QGLFormat &f, QWidget* parent) : QGLWidget(f, parent)
   right = 11.;
   bottom = -11.;
   top = 11.;
+  angleModelsRotation = 0.;
 }
 
 void MyGLWidget::initializeGL ()
@@ -366,7 +367,7 @@ void MyGLWidget::modelTransformPatricio ()
 {
   glm::mat4 TG;  // Matriu de transformació
   TG = glm::mat4(1.f);
-
+  TG = glm::rotate(TG, angleModelsRotation, glm::vec3(0,1,0)); //Afegit per fer rotació pitjant R
   TG = glm::translate(TG, glm::vec3(-10 , 0, -10));
   TG = glm::scale(TG, glm::vec3(scalePatr, scalePatr, scalePatr));
   TG = glm::rotate(TG, (float)M_PI/4, glm::vec3(0,1,0));
@@ -379,7 +380,7 @@ void MyGLWidget::modelTransformLego ()
 {
   glm::mat4 TG;  // Matriu de transformació
   TG = glm::mat4(1.f);
-
+  TG = glm::rotate(TG, angleModelsRotation, glm::vec3(0,1,0)); //Afegit per fer rotació pitjant R
   TG = glm::translate(TG, glm::vec3(-10 ,0, 10));
   TG = glm::rotate(TG, (float)M_PI*3/4, glm::vec3(0,1,0));
   TG = glm::scale(TG, glm::vec3(scaleLego, scaleLego, scaleLego));
@@ -520,6 +521,12 @@ void MyGLWidget::keyPressEvent (QKeyEvent *e)
         isOrthoPlantCamera = !isOrthoPlantCamera;
         projectTransform();
         viewTransform();
+        break;
+    }
+
+    case Qt::Key_R:
+    {
+        angleModelsRotation += M_PI/8.0;
         break;
     }
 

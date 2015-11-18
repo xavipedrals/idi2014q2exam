@@ -88,4 +88,7 @@ class MyGLWidget : public QGLWidget
     //parametres camera axonometrica (ortho)
     bool isOrthoPlantCamera;
     GLdouble left, right, bottom, top;
+
+    //parametres rotacio
+    float angleModelsRotation;
 };
